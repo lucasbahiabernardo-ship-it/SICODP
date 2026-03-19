@@ -90,8 +90,7 @@
     if (!url || !url.startsWith("https://")) throw new Error("URL inválida");
 
     // Redireciona mantendo o caminho (ex: /admin continua /admin)
-    const destino = url.replace(/\/$/, "") + window.location.pathname + window.location.search;
-    window.location.replace(destino);
+    window.location.replace(url);
 
   } catch (err) {
     console.error("Falha ao redirecionar:", err);
