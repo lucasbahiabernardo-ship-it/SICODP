@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SICODEP - Redirecionando...</title>
+  <style>
+    :root {
+      --blue: #0c57b8;
+      --green: #34b233;
+      --muted: #5b6b7e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #f8fbfe 0%, #eef5fb 100%);
+      color: #0f172a;
+      padding: 24px;
+      text-align: center;
+    }
+    .box {
+      max-width: 480px;
+      width: 100%;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #d8e6f3;
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 24px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h1 {
+      font-size: 1.4rem;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+    p {
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.6;
+    }
+    .error {
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 14px;
+      color: #991b1b;
+      display: none;
+      font-size: .92rem;
+    }
+    .error a { color: #991b1b; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <h1>Redirecionando para o SICODEP…</h1>
+    <p>Localizando o servidor. Você será redirecionado em instantes.</p>
+    <div id="errBox" class="error">
+      Não foi possível localizar o servidor no momento.<br>
+      Tente novamente em alguns minutos ou
+      <a href="javascript:location.reload()">clique aqui para tentar de novo</a>.
+    </div>
+  </div>
+
+<script>
+(async () => {
+  // ── CONFIGURAÇÃO ─────────────────────────────────────────────────
+  const BIN_ID     = "COLE_SEU_BIN_ID_AQUI";
+  const ACCESS_KEY = "COLE_SUA_ACCESS_KEY_AQUI";
+  // ─────────────────────────────────────────────────────────────────
+
+  try {
+    const resp = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { "X-Access-Key": ACCESS_KEY }
+    });
+
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+    const url  = data?.record?.url;
+
+    if (!url || !url.startsWith("https://")) throw new Error("URL inválida");
+
+    // Redireciona mantendo o caminho (ex: /admin continua /admin)
+    const destino = url.replace(/\/$/, "") + window.location.pathname + window.location.search;
+    window.location.replace(destino);
+
+  } catch (err) {
+    console.error("Falha ao redirecionar:", err);
+    document.getElementById("errBox").style.display = "block";
+    document.querySelector(".spinner").style.display = "none";
+  }
+})();
+</script>
+</body>
+</html>
