@@ -74,19 +74,18 @@
 <script>
 (async () => {
   // ── CONFIGURAÇÃO ─────────────────────────────────────────────────
-  const BIN_ID     = "COLE_SEU_BIN_ID_AQUI";
-  const ACCESS_KEY = "COLE_SUA_ACCESS_KEY_AQUI";
+  const BIN_ID = "69bbe5a9b7ec241ddc81cdc4";
   // ─────────────────────────────────────────────────────────────────
 
   try {
     const resp = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-      headers: { "X-Access-Key": ACCESS_KEY }
+      headers: { "X-Bin-Meta": "false" }
     });
 
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
     const data = await resp.json();
-    const url  = data?.record?.url;
+    const url  = data?.url || data?.record?.url;
 
     if (!url || !url.startsWith("https://")) throw new Error("URL inválida");
 
